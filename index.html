@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdades o Preguntas Incomodas - Juego para Adultos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 50%, #16213e 100%);
+            min-height: 100vh;
+        }
+        
+        .card-flip {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card-flip.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .glass-effect {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .glass-effect {
+                padding: 1rem !important;
+            }
+            
+            .player-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .card-container {
+                height: 200px !important;
+            }
+            
+            #cardContent {
+                font-size: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .glass-effect {
+                padding: 0.75rem !important;
+            }
+            
+            .card-container {
+                height: 180px !important;
+            }
+            
+            #cardContent {
+                font-size: 0.9rem !important;
+                padding: 0.5rem !important;
+            }
+            
+            .btn-responsive {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.875rem !important;
+            }
+            
+            .input-responsive {
+                padding: 0.5rem !important;
+                font-size: 0.875rem !important;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .min-h-screen {
+                min-height: auto;
+            }
+            
+            .card-container {
+                height: 150px !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-4 sm:mb-6 lg:mb-8 fade-in">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">
+                <i class="fas fa-dice"></i> Verdades o Preguntas Incomodas
+            </h1>
+            <p class="text-gray-300 text-sm sm:text-base lg:text-lg">Juego para adultos con amigos</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="grid lg:grid-cols-3 gap-4 lg:gap-6">
+            <!-- Panel de Jugadores -->
+            <section class="lg:col-span-1">
+                <div class="glass-effect rounded-2xl p-4 sm:p-6 text-white fade-in">
+                    <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
+                        <i class="fas fa-users"></i> Jugadores
+                    </h2>
+                    
+                    <!-- Formulario para agregar jugador -->
+                    <div class="mb-4 sm:mb-6">
+                        <div class="flex gap-2">
+                            <input 
+                                type="text" 
+                                id="playerName" 
+                                placeholder="Nombre del jugador"
+                                class="flex-1 px-3 sm:px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:border-purple-500 transition-colors input-responsive"
+                                maxlength="20"
+                            >
+                            <button 
+                                onclick="addPlayer()"
+                                class="px-3 sm:px-4 py-2 bg-purple-600/50 hover:bg-purple-600 border border-purple-500 rounded-lg transition-colors btn-responsive"
+                            >
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de jugadores -->
+                    <div id="playersList" class="space-y-2 max-h-48 sm:max-h-64 overflow-y-auto">
+                        <!-- Los jugadores se agregarán aquí dinámicamente -->
+                    </div>
+                    
+                    <!-- Botón para empezar juego -->
+                    <button 
+                        id="startGameBtn"
+                        onclick="startGame()"
+                        disabled
+                        class="w-full mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-purple-500 btn-responsive"
+                    >
+                        <i class="fas fa-play"></i> Empezar Juego
+                    </button>
+                </div>
+            </section>
+
+            <!-- Área de Juego -->
+            <section class="lg:col-span-2">
+                <div class="glass-effect rounded-2xl p-4 sm:p-6 lg:p-8 text-white min-h-[400px] sm:min-h-[500px] fade-in">
+                    <!-- Pantalla de inicio -->
+                    <div id="welcomeScreen" class="text-center">
+                        <div class="mb-6 sm:mb-8">
+                            <i class="fas fa-dice text-4xl sm:text-5xl lg:text-6xl mb-3 sm:mb-4 text-purple-400"></i>
+                            <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4">Bienvenidos al Juego</h2>
+                            <p class="text-gray-300 max-w-md mx-auto text-sm sm:text-base">
+                                Agrega al menos 2 jugadores para comenzar. 
+                                Cada turno saldrá una tarjeta aleatoria con una verdad o pregunta incomoda.
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-xs sm:max-w-sm mx-auto">
+                            <div class="bg-gray-800/50 rounded-lg p-3 sm:p-4 text-center border border-gray-700">
+                                <i class="fas fa-user-friends text-xl sm:text-2xl mb-2 text-purple-400"></i>
+                                <p class="text-xs sm:text-sm text-gray-300">2+ Jugadores</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-3 sm:p-4 text-center border border-gray-700">
+                                <i class="fas fa-layer-group text-xl sm:text-2xl mb-2 text-purple-400"></i>
+                                <p class="text-xs sm:text-sm text-gray-300">500+ Tarjetas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pantalla de juego -->
+                    <div id="gameScreen" class="hidden">
+                        <!-- Jugador actual -->
+                        <div class="text-center mb-4 sm:mb-6">
+                            <p class="text-gray-400 mb-2 text-sm sm:text-base">Turno de:</p>
+                            <div id="currentPlayerDisplay" class="inline-flex items-center gap-2 sm:gap-3 bg-gray-800/50 px-4 sm:px-6 py-2 sm:py-3 rounded-full border border-purple-500">
+                                <div id="currentPlayerAvatar" class="player-avatar"></div>
+                                <span id="currentPlayerName" class="font-semibold text-sm sm:text-base lg:text-lg"></span>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta -->
+                        <div class="flex justify-center mb-6 sm:mb-8">
+                            <div class="relative w-full max-w-sm sm:max-w-md card-container">
+                                <div id="gameCard" class="card-flip w-full h-full">
+                                    <!-- Frente de la tarjeta -->
+                                    <div class="card-front glass-effect rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-800/60 transition-colors border border-purple-500/30" onclick="flipCard()">
+                                        <i class="fas fa-question text-3xl sm:text-4xl lg:text-5xl mb-3 sm:mb-4 text-purple-400"></i>
+                                        <p class="text-lg sm:text-xl font-semibold">Click para revelar</p>
+                                        <p class="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">la tarjeta</p>
+                                    </div>
+                                    
+                                    <!-- Reverso de la tarjeta -->
+                                    <div class="card-back glass-effect rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-center border border-purple-500/30">
+                                        <div id="cardCategory" class="mb-3 sm:mb-4 px-3 sm:px-4 py-1 sm:py-2 bg-purple-600/50 rounded-full text-xs sm:text-sm font-semibold border border-purple-500"></div>
+                                        <p id="cardContent" class="text-base sm:text-xl text-center leading-relaxed"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Controles -->
+                        <div class="flex justify-center gap-2 sm:gap-4">
+                            <button 
+                                onclick="nextTurn()"
+                                class="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg font-semibold hover:from-green-700 hover:to-teal-700 transition-all border border-green-500 btn-responsive"
+                            >
+                                <i class="fas fa-forward"></i> <span class="hidden sm:inline">Siguiente Turno</span>
+                                <span class="sm:hidden">Siguiente</span>
+                            </button>
+                            <button 
+                                onclick="resetCard()"
+                                class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-800/50 hover:bg-gray-800/70 border border-gray-600 rounded-lg font-semibold transition-colors btn-responsive"
+                            >
+                                <i class="fas fa-redo"></i> <span class="hidden sm:inline">Voltear Tarjeta</span>
+                                <span class="sm:hidden">Voltear</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-4 sm:mt-6 lg:mt-8 text-gray-400 text-xs sm:text-sm">
+            <p>Disfruta el juego responsibly 🍻</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
