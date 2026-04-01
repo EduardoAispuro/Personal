@@ -840,7 +840,16 @@ function flipCard() {
             </div>
         `;
     } else {
-        updateCurrentPlayer();
+        // Asegurarse de que el display del jugador actual se muestre correctamente
+        const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+        document.getElementById('currentPlayerDisplay').innerHTML = `
+            <div class="inline-flex items-center gap-3 bg-gray-800/50 px-6 py-3 rounded-full border border-purple-500">
+                <div id="currentPlayerAvatar" class="player-avatar" style="background-color: ${currentPlayer.color}">
+                    ${currentPlayer.name.charAt(0).toUpperCase()}
+                </div>
+                <span id="currentPlayerName" class="font-semibold text-lg">${currentPlayer.name}</span>
+            </div>
+        `;
     }
     
     // Mostrar contenido
